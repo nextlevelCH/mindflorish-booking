@@ -1,5 +1,5 @@
 # Buchungsbestätigung Mindflorish auf dem VPS, HTTPS über die bestehende Traefik-Instanz.
-# "traefik" ist der Name des Traefik-Netzes wie bei der Meeting-App. Weicht er dort ab, hier gleich setzen.
+# Traefik erreicht den Container ohne gemeinsames Netz, wie bei der Meeting-App.
 services:
   mindflorish-booking:
     image: ghcr.io/nextlevelch/mindflorish-booking:latest
@@ -11,9 +11,3 @@ services:
       - "traefik.http.routers.mindflorish-booking.entrypoints=websecure"
       - "traefik.http.routers.mindflorish-booking.tls.certresolver=letsencrypt"
       - "traefik.http.services.mindflorish-booking.loadbalancer.server.port=80"
-    networks:
-      - traefik
-
-networks:
-  traefik:
-    external: true
