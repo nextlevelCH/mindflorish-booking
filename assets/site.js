@@ -1,7 +1,7 @@
 // Einstellungen: Google-Tag der Hauptseite, Meta-Pixel-ID nachtragen, sobald sie vorliegt
 var MF_CONFIG = {
   googleTagId: 'GT-TNP972XG',
-  metaPixelId: '27538577482485576',
+  metaPixelId: '1862301615141973',
   privacyUrl: 'https://mindflorish.ch/datenschutzerklaerung/'
 };
 
