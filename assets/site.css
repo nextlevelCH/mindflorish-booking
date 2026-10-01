@@ -220,7 +220,9 @@ p { margin: 0; }
   .card-head { flex-direction: column; gap: 14px; }
   .arrow { display: none; }
   .btn { padding: 16px 20px; gap: 12px; font-size: clamp(17px, 5.1vw, 19px); white-space: nowrap; }
-  .btn svg:first-child { display: none; }
+  /* Ohne Icons auf Mobile, damit der Text Luft hat */
+  .btn svg { display: none; }
+  .btn span { text-align: center; }
   .signoff { padding: 32px 0 56px; }
   .signoff .inner { gap: 18px; }
   .portrait { width: 92px; height: 92px; }
