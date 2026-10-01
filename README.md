@@ -10,7 +10,7 @@ Statische Dankesseite nach der Buchung des Erstgesprächs, live unter `https://b
 
 ## Tracking und Cookie-Banner
 
-- IDs stehen oben in `assets/site.js` (`MF_CONFIG`): Google-Tag `GT-TNP972XG` der Hauptseite, Meta Pixel `1862301615141973`.
+- IDs stehen oben in `assets/site.js` (`MF_CONFIG`): Google-Tag `GT-TNP972XG` der Hauptseite, Meta Pixel `27538577482485576`.
 - Eigenes Opt-in-Banner: Google und Meta laden erst nach Zustimmung. Auswahl liegt im localStorage (`mf_consent`), der Footer-Link «Cookie-Einstellungen» öffnet sie erneut.
 - Buchung zählt nur, wenn der Besuch von Calendly kommt (`?src=calendly`, `invitee_uuid` oder Referrer calendly.com), einmal pro Buchung bzw. 30 Minuten. Google-Event `booking_confirmed`, Meta `Schedule` mit `eventID` = `invitee_uuid`.
 - Weitere Events: `video_start`, `video_progress` (50 %), `video_complete`, `questionnaire_download` (Meta: VideoStart, VideoHalf, VideoComplete, QuestionnaireDownload).
