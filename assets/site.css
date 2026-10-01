@@ -219,10 +219,10 @@ p { margin: 0; }
   .icon-circle svg { width: 26px; height: 26px; }
   .card-head { flex-direction: column; gap: 14px; }
   .arrow { display: none; }
-  .btn { padding: 16px 20px; gap: 12px; font-size: clamp(17px, 5.1vw, 19px); white-space: nowrap; }
-  /* Ohne Icons auf Mobile, damit der Text Luft hat */
-  .btn svg { display: none; }
-  .btn span { text-align: center; }
+  /* Nur der Download-Pfeil bleibt, Schrift skaliert mit, damit rechts Luft bleibt */
+  .btn { padding: 16px 22px; gap: 10px; font-size: clamp(15px, 4.3vw, 17px); white-space: nowrap; }
+  .btn svg:first-child { display: none; }
+  .btn .dl { width: 20px; height: 20px; }
   .signoff { padding: 32px 0 56px; }
   .signoff .inner { gap: 18px; }
   .portrait { width: 92px; height: 92px; }
