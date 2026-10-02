@@ -285,6 +285,7 @@ p { margin: 0; }
 .cc-row-text { display: grid; }
 .cc-row-title { font-size: 14px; font-weight: 600; color: var(--ink); }
 .cc-row-desc { font-size: 13px; line-height: 1.45; color: var(--muted); }
+.cc-id { padding-top: 10px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); word-break: break-all; }
 .cc-always { flex: none; font-size: 12px; font-weight: 600; color: var(--blue-deep); }
 .cc-switch { position: relative; flex: none; width: 44px; height: 26px; cursor: pointer; }
 .cc-switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }

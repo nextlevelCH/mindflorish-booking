@@ -11,3 +11,9 @@ services:
       - "traefik.http.routers.mindflorish-booking.entrypoints=websecure"
       - "traefik.http.routers.mindflorish-booking.tls.certresolver=letsencrypt"
       - "traefik.http.services.mindflorish-booking.loadbalancer.server.port=80"
+    # Einwilligungs-Protokoll bleibt beim Neu-Bereitstellen erhalten
+    volumes:
+      - consent-log:/var/log/consent
+
+volumes:
+  consent-log:

@@ -16,3 +16,6 @@ Statische Dankesseite nach der Buchung des Erstgesprächs, live unter `https://b
 - Weitere Events: `video_start`, `video_progress` (50 %), `video_complete`, `questionnaire_download` (Meta: VideoStart, VideoHalf, VideoComplete, QuestionnaireDownload).
 - Calendly-Weiterleitung: `https://booking.mindflorish.ch/?src=calendly` bzw. `/en/?src=calendly`. Alle URL-Parameter werden beim Laden sofort entfernt.
 - Neue Tracking-Kategorien: `CONSENT_VERSION` in `site.js` erhöhen, dann fragt das Banner erneut.
+- Zustimmung läuft nach 12 Monaten ab (`CONSENT_MAX_AGE`), dann fragt das Banner erneut.
+- Nachweis-Protokoll: Jede Entscheidung ruft `/consent` auf. nginx schreibt eine JSON-Zeile nach `/var/log/consent/consent.log` (Zeit, Status, Zufalls-ID, Banner-Version, Statistik, Marketing, Aktion, Sprache), ohne IP-Adresse. Die ID sieht die Besucherin in den Cookie-Einstellungen. Die Datei liegt im Docker-Volume `consent-log` und übersteht «Neu bereitstellen».
+- Protokoll lesen im VPS-Terminal: `docker exec mindflorish-booking cat /var/log/consent/consent.log`, nach einer ID suchen: `docker exec mindflorish-booking grep <ID> /var/log/consent/consent.log`.

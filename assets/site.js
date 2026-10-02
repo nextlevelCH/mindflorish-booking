@@ -13,6 +13,8 @@ var MF_CONFIG = {
   // Neue Kategorien verlangen eine neue Zustimmung
   var CONSENT_VERSION = HAS_META ? 2 : 1;
   var CONSENT_KEY = 'mf_consent';
+  // Nach 12 Monaten fragt das Banner erneut
+  var CONSENT_MAX_AGE = 365 * 24 * 60 * 60 * 1000;
   var PENDING_KEY = 'mf_pending_booking';
   var TRACKED_KEY = 'mf_booking_tracked';
 
@@ -31,7 +33,8 @@ var MF_CONFIG = {
       statsDesc: 'Google Analytics zählt Besuche und Buchungen.',
       marketing: 'Marketing',
       marketingDesc: 'Der Meta Pixel misst, welche Anzeigen zu Buchungen führen.',
-      always: 'Immer aktiv'
+      always: 'Immer aktiv',
+      consentId: 'ID deiner Auswahl'
     },
     en: {
       title: 'Cookies and statistics',
@@ -47,7 +50,8 @@ var MF_CONFIG = {
       statsDesc: 'Google Analytics counts visits and bookings.',
       marketing: 'Marketing',
       marketingDesc: 'The Meta Pixel measures which ads lead to bookings.',
-      always: 'Always active'
+      always: 'Always active',
+      consentId: 'ID of your choice'
     }
   }[LANG];
 
@@ -174,9 +178,26 @@ var MF_CONFIG = {
 
   var banner = null;
 
-  function saveConsent(stats, marketing) {
-    consent = { v: CONSENT_VERSION, stats: stats, marketing: HAS_META && marketing, ts: Date.now() };
+  function newId() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0;
+      return (c === 'x' ? r : (r & 3 | 8)).toString(16);
+    });
+  }
+
+  // Nachweis auf dem Server: Zeitpunkt, Auswahl, Banner-Version und Zufalls-ID, ohne IP-Adresse
+  function logConsent(c, action) {
+    var q = 'id=' + encodeURIComponent(c.cid) + '&v=' + c.v + '&stats=' + (c.stats ? 1 : 0) +
+      '&mkt=' + (c.marketing ? 1 : 0) + '&action=' + action + '&lang=' + LANG;
+    try { fetch('/consent?' + q, { method: 'GET', keepalive: true, cache: 'no-store', credentials: 'omit' }).catch(function () {}); } catch (e) {}
+  }
+
+  function saveConsent(stats, marketing, action) {
+    var cid = consent && consent.cid ? consent.cid : newId();
+    consent = { v: CONSENT_VERSION, stats: stats, marketing: HAS_META && marketing, ts: Date.now(), cid: cid };
     write(localStorage, CONSENT_KEY, consent);
+    logConsent(consent, action);
     closeBanner();
     // Widerruf greift erst nach dem Neuladen vollständig, weil geladene Skripte im Speicher bleiben
     if ((gaLoaded && !consent.stats) || (metaLoaded && !consent.marketing)) {
@@ -213,6 +234,7 @@ var MF_CONFIG = {
         toggleRow('cc-nec', TEXT.necessary, TEXT.necessaryDesc, true, true) +
         toggleRow('cc-stats', TEXT.stats, TEXT.statsDesc, current.stats, false) +
         (HAS_META ? toggleRow('cc-mkt', TEXT.marketing, TEXT.marketingDesc, current.marketing, false) : '') +
+        (consent && consent.cid ? '<p class="cc-id">' + TEXT.consentId + ': ' + consent.cid + '</p>' : '') +
       '</div>' +
       '<div class="cc-actions">' +
         '<button type="button" class="cc-btn cc-primary" data-cc="accept">' + TEXT.accept + '</button>' +
@@ -229,8 +251,8 @@ var MF_CONFIG = {
   function onBannerClick(e) {
     var action = e.target.getAttribute('data-cc');
     if (!action) return;
-    if (action === 'accept') saveConsent(true, true);
-    if (action === 'reject') saveConsent(false, false);
+    if (action === 'accept') saveConsent(true, true, 'accept');
+    if (action === 'reject') saveConsent(false, false, 'reject');
     if (action === 'settings') {
       banner.querySelector('.cc-settings').hidden = false;
       e.target.setAttribute('data-cc', 'save');
@@ -239,7 +261,7 @@ var MF_CONFIG = {
     if (action === 'save') {
       var s = banner.querySelector('#cc-stats');
       var m = banner.querySelector('#cc-mkt');
-      saveConsent(!!(s && s.checked), !!(m && m.checked));
+      saveConsent(!!(s && s.checked), !!(m && m.checked), 'save');
     }
   }
 
@@ -254,7 +276,7 @@ var MF_CONFIG = {
   if (reopen) reopen.addEventListener('click', function () { openBanner(true); });
 
   var stored = read(localStorage, CONSENT_KEY);
-  if (stored && stored.v === CONSENT_VERSION) {
+  if (stored && stored.v === CONSENT_VERSION && Date.now() - stored.ts < CONSENT_MAX_AGE) {
     consent = stored;
     applyConsent();
   } else {
